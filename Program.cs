@@ -1,7 +1,16 @@
+using LoanManagementSystemAssignment.Repositories;
+using LoanManagementSystemAssignment.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+// register the repository and service
+builder.Services.AddScoped<ILoanRepository, LoanRepository>();
+builder.Services.AddScoped<ILoanService, LoanService>();
+
+builder.Services.AddSession();
 
 var app = builder.Build();
 
