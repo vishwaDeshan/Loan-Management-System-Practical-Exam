@@ -11,4 +11,8 @@ CREATE TABLE LoanApplications (
     Status NVARCHAR(50) NOT NULL DEFAULT 'New'
 );
 
+-- Indexing (added for future implementaions)
+CREATE NONCLUSTERED INDEX IX_LoanApplications_NicPassport 
+ON LoanApplications(NicPassport);
+
 Select * From LoanApplications
