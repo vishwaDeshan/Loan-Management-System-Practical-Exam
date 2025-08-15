@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Projects\\LoanManagementSystemAssignment\\LoanManagementSystemAssignment.csproj": {}
+    "D:\\Projects\\Loan-Management-System-Practical-Exam\\LoanManagementSystemAssignment.csproj": {}
   },
   "projects": {
-    "D:\\Projects\\LoanManagementSystemAssignment\\LoanManagementSystemAssignment.csproj": {
+    "D:\\Projects\\Loan-Management-System-Practical-Exam\\LoanManagementSystemAssignment.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Projects\\LoanManagementSystemAssignment\\LoanManagementSystemAssignment.csproj",
+        "projectUniqueName": "D:\\Projects\\Loan-Management-System-Practical-Exam\\LoanManagementSystemAssignment.csproj",
         "projectName": "LoanManagementSystemAssignment",
-        "projectPath": "D:\\Projects\\LoanManagementSystemAssignment\\LoanManagementSystemAssignment.csproj",
+        "projectPath": "D:\\Projects\\Loan-Management-System-Practical-Exam\\LoanManagementSystemAssignment.csproj",
         "packagesPath": "C:\\Users\\ACER\\.nuget\\packages\\",
-        "outputPath": "D:\\Projects\\LoanManagementSystemAssignment\\obj\\",
+        "outputPath": "D:\\Projects\\Loan-Management-System-Practical-Exam\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
