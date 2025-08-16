@@ -23,7 +23,7 @@ namespace LoanManagementSystemAssignment.Controllers
 				return View(model);
 			}
 
-			if (model.Username == "admin" && model.Password == "12345")
+			if (model.Username == "Admin" && model.Password == "Admin@123")
 			{
 				var claims = new List<Claim>
 				{
