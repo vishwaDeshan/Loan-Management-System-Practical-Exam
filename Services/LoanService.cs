@@ -83,6 +83,44 @@ namespace LoanManagementSystemAssignment.Services
 			await _repository.UpdateStatusAsync(id, status);
 		}
 
+		public async Task UpdateAsync(LoanApplicationViewModel viewModel)
+		{
+			if (viewModel == null)
+				throw new ArgumentNullException(nameof(viewModel));
+
+			if (string.IsNullOrWhiteSpace(viewModel.CustomerName))
+				throw new ArgumentException("Customer Name cannot be empty.");
+
+			if (string.IsNullOrWhiteSpace(viewModel.NicPassport))
+				throw new ArgumentException("NIC/Passport cannot be empty.");
+
+			if (!Enum.IsDefined(typeof(LoanType), viewModel.LoanType))
+				throw new ArgumentException("Invalid Loan Type.");
+
+			if (viewModel.LoanAmount <= 0)
+				throw new ArgumentException("Loan Amount must be positive.");
+
+			if (viewModel.DurationMonths <= 0 || viewModel.DurationMonths > 360)
+				throw new ArgumentException("Duration must be between 1 and 360 months.");
+
+			if (!Enum.IsDefined(typeof(LoanStatus), viewModel.Status))
+				throw new ArgumentException("Invalid Status.");
+
+			var loan = new LoanApplication
+			{
+				Id = viewModel.Id,
+				CustomerName = viewModel.CustomerName,
+				NicPassport = viewModel.NicPassport,
+				LoanType = viewModel.LoanType,
+				InterestRate = GetInterestRate(viewModel.LoanType.ToString()),
+				LoanAmount = viewModel.LoanAmount,
+				DurationMonths = viewModel.DurationMonths,
+				Status = viewModel.Status
+			};
+
+			await _repository.UpdateAsync(loan);
+		}
+
 		public decimal GetInterestRate(string loanType)
 		{
 			return loanType switch

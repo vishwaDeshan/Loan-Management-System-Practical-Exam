@@ -23,7 +23,7 @@ namespace LoanManagementSystemAssignment.Repositories
 				using (var cmd = new SqlCommand(
 					"SELECT Id, CustomerName, NicPassport, LoanType, InterestRate, LoanAmount, DurationMonths, Status " +
 					"FROM LoanApplications " +
-					"ORDER BY Id " , conn))
+					"ORDER BY Id ", conn))
 				{
 					using (var reader = await cmd.ExecuteReaderAsync())
 					{
@@ -118,5 +118,45 @@ namespace LoanManagementSystemAssignment.Repositories
 				}
 			}
 		}
+
+		public async Task UpdateAsync(LoanApplication loan)
+		{
+			if (loan == null) throw new ArgumentNullException(nameof(loan));
+
+			using (var conn = new SqlConnection(_connectionString))
+			{
+				await conn.OpenAsync();
+
+				var query = @"
+            UPDATE LoanApplications
+            SET CustomerName = @CustomerName,
+                NicPassport = @NicPassport,
+                LoanType = @LoanType,
+                InterestRate = @InterestRate,
+                LoanAmount = @LoanAmount,
+                DurationMonths = @DurationMonths,
+                Status = @Status
+            WHERE Id = @Id";
+
+				using (var cmd = new SqlCommand(query, conn))
+				{
+					cmd.Parameters.AddWithValue("@CustomerName", loan.CustomerName);
+					cmd.Parameters.AddWithValue("@NicPassport", loan.NicPassport);
+					cmd.Parameters.AddWithValue("@LoanType", loan.LoanType.ToString());
+					cmd.Parameters.AddWithValue("@InterestRate", loan.InterestRate);
+					cmd.Parameters.AddWithValue("@LoanAmount", loan.LoanAmount);
+					cmd.Parameters.AddWithValue("@DurationMonths", loan.DurationMonths);
+					cmd.Parameters.AddWithValue("@Status", loan.Status.ToString());
+					cmd.Parameters.AddWithValue("@Id", loan.Id);
+
+					int rowsAffected = await cmd.ExecuteNonQueryAsync();
+					if (rowsAffected == 0)
+					{
+						throw new ArgumentException("Loan not found or could not be updated");
+					}
+				}
+			}
+		}
+
 	}
 }
