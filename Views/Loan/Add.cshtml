@@ -11,7 +11,7 @@
     <div class="card shadow-lg rounded-lg p-4 form-card">
         <h2 class="mb-4 text-center">@ViewData["Title"]</h2>
 
-        <form asp-action="Add" method="post">
+        <form asp-action="Add" method="post" id="addLoanForm">
             <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
             <div class="form-group mb-3">
@@ -44,7 +44,6 @@
                 </div>
             </div>
 
-
             <div class="form-group mb-3">
                 <label asp-for="LoanAmount" class="form-label">Loan Amount (LKR)</label>
                 <input asp-for="LoanAmount" class="form-control" />
@@ -67,16 +66,45 @@
             </div>
 
             <div class="form-group mt-4 text-center">
-                <button type="submit" class="btn btn-primary px-4">Submit</button>
-                <a asp-action="Index" class="btn btn-danger px-4 ms-2">Cancel</a>
+                <div class="text-end mb-3">
+                    <a asp-action="Index" class="btn btn-danger px-4 ms-2" id="cancelButton">Cancel</a>
+                    <button type="submit" class="btn btn-primary px-4" id="submitLoanButton">Submit</button>
+                </div>
             </div>
         </form>
     </div>
 </div>
 
+<!-- Include the confirmation modal -->
+<partial name="_ConfirmationModal" />
+
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
+        const form = document.getElementById('addLoanForm');
+        const initialValues = {};
+        let isFormDirty = false;
+
+        function storeInitialValues() {
+            const inputs = form.querySelectorAll('input, select');
+            inputs.forEach(input => {
+                initialValues[input.name] = input.value;
+            });
+        }
+
+        function checkFormDirty() {
+            let isDirty = false;
+            const inputs = form.querySelectorAll('input, select');
+            inputs.forEach(input => {
+                if (input.value !== initialValues[input.name]) {
+                    isDirty = true;
+                }
+            });
+            return isDirty;
+        }
+
+        window.addEventListener('load', storeInitialValues);
+
         document.getElementById('LoanType').addEventListener('change', function () {
             let rate = 0;
             switch (this.value) {
@@ -86,6 +114,48 @@
                 default: rate = 0; break;
             }
             document.getElementById('InterestRate').value = rate;
+            isFormDirty = checkFormDirty();
+        });
+
+        form.querySelectorAll('input, select').forEach(input => {
+            input.addEventListener('change', () => {
+                isFormDirty = checkFormDirty();
+            });
+        });
+
+        document.getElementById('cancelButton').addEventListener('click', function (event) {
+            event.preventDefault();
+            if (isFormDirty) {
+                const modalBody = document.querySelector('#confirmationModal .modal-body');
+                modalBody.textContent = 'You have unsaved changes. Are you sure you want to cancel and discard them?';
+                window.pendingAction = () => window.location.href = '@Url.Action("Index")';
+                const modal = new bootstrap.Modal(document.getElementById('confirmationModal'));
+                modal.show();
+            } else {
+                window.location.href = '@Url.Action("Index")';
+            }
+        });
+
+        document.getElementById('addLoanForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            if ($(this).valid()) { // Check if form is valid using jQuery validation
+                const customerName = document.getElementById('CustomerName').value;
+                const modalBody = document.querySelector('#confirmationModal .modal-body');
+                modalBody.textContent = `Are you sure you want to submit the loan application for ${customerName || 'this customer'}?`;
+                window.pendingForm = this;
+                const modal = new bootstrap.Modal(document.getElementById('confirmationModal'));
+                modal.show();
+            }
+        });
+
+        document.getElementById('confirmButton').addEventListener('click', function () {
+            if (window.pendingForm) {
+                window.pendingForm.submit();
+            } else if (window.pendingAction) {
+                window.pendingAction();
+            }
+            const modal = bootstrap.Modal.getInstance(document.getElementById('confirmationModal'));
+            modal.hide();
         });
     </script>
 }

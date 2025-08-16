@@ -19,21 +19,21 @@
             <dd class="col-sm-8">@Model.LoanType</dd>
 
             <dt class="col-sm-4">Interest Rate (%)</dt>
-            <dd class="col-sm-8">@Model.InterestRate</dd>
+            <dd class="col-sm-8">@Model.InterestRate %</dd>
 
             <dt class="col-sm-4">Loan Amount</dt>
-            <dd class="col-sm-8">@String.Format("₨{0:N2}", Model.LoanAmount)</dd>
+            <dd class="col-sm-8">@String.Format("Rs.{0:N2} ", Model.LoanAmount)</dd>
 
             <dt class="col-sm-4">Duration (Months)</dt>
             <dd class="col-sm-8">@Model.DurationMonths</dd>
 
             <dt class="col-sm-4">Status</dt>
             <dd class="col-sm-8">
-                @if (Model.Status.Equals("Approved"))
+                @if (Model.Status.ToString().Equals("Approved"))
                 {
                     <span class="badge badge-approved">Approved</span>
                 }
-                else if (Model.Status.Equals("Rejected"))
+                else if (Model.Status.ToString().Equals("Rejected"))
                 {
                     <span class="badge badge-rejected">Rejected</span>
                 }

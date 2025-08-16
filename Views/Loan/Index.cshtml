@@ -41,13 +41,14 @@
                                 <td>@String.Format("Rs. {0:N2}", loan.LoanAmount)</td>
                                 <td>@loan.DurationMonths</td>
                                 <td>
-                                    <form asp-action="EditStatus" method="post" class="d-inline ms-2">
+                                    <form asp-action="EditStatus" method="post" class="status-form d-inline ms-2" data-loan-id="@loan.Id">
                                         <input type="hidden" name="id" value="@loan.Id" />
-                                        <select name="status" onchange="this.form.submit()"
-                                                class="form-select form-select-sm d-inline-block w-auto">
+                                        <select name="status" class="form-select form-select-sm d-inline-block w-auto status-select">
                                             @foreach (var status in Enum.GetValues(typeof(LoanStatus)))
                                             {
-                                                <option value="@status" selected="@(loan.Status == (LoanStatus)status)">@status</option>
+                                                <option value="@status" selected="@(loan.Status == (LoanStatus)status)">
+                                                    @status
+                                                </option>
                                             }
                                         </select>
                                     </form>
@@ -68,3 +69,55 @@
         </div>
     </div>
 </div>
+
+<partial name="_ConfirmationModal" />
+
+@section Scripts {
+    <script>
+        document.querySelectorAll('.status-select').forEach(select => {
+            select.dataset.originalValue = select.value;
+
+            select.addEventListener('change', function (e) {
+                const original = this.dataset.originalValue;
+                const newValue = this.value;
+
+                this.value = original;
+
+                window.pendingForm = this.closest('.status-form');
+                window.pendingSelect = this;
+                window.pendingNewValue = newValue;
+
+                const loanId = window.pendingForm.dataset.loanId;
+                const modalBody = document.querySelector('#confirmationModal .modal-body');
+                modalBody.textContent = `Are you sure you want to change the status of loan ID ${loanId} to ${newValue}?`;
+
+                const modal = new bootstrap.Modal(document.getElementById('confirmationModal'));
+                modal.show();
+            });
+        });
+
+        // Confirm button
+        document.getElementById('confirmButton').addEventListener('click', function () {
+            if (window.pendingSelect && window.pendingNewValue) {
+                window.pendingSelect.value = window.pendingNewValue;
+            }
+            if (window.pendingForm) {
+                window.pendingForm.submit();
+            }
+            const modal = bootstrap.Modal.getInstance(document.getElementById('confirmationModal'));
+            modal.hide();
+        });
+
+        // cancel buttin
+        document.getElementById('cancelButton').addEventListener('click', function () {
+            if (window.pendingSelect) {
+                window.pendingSelect.value = window.pendingSelect.dataset.originalValue;
+
+                window.pendingSelect.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+
+            const modal = bootstrap.Modal.getInstance(document.getElementById('confirmationModal'));
+            modal.hide();
+        });
+</script>
+}
