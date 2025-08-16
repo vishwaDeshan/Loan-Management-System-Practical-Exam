@@ -1,10 +1,12 @@
 ﻿using LoanManagementSystemAssignment.Enums;
 using LoanManagementSystemAssignment.Services;
 using LoanManagementSystemAssignment.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LoanManagementSystemAssignment.Controllers
 {
+	[Authorize]
 	public class LoanController : Controller
 	{
 		private readonly ILoanService _service;
@@ -27,10 +29,7 @@ namespace LoanManagementSystemAssignment.Controllers
 			var model = new LoanApplicationViewModel
 			{
 				CustomerName = string.Empty,
-				NicPassport = string.Empty,
-				LoanType = LoanType.Personal,
-				Status = LoanStatus.New,
-				InterestRate = 5.0m
+				NicPassport = string.Empty
 			};
 			return View(model);
 		}
