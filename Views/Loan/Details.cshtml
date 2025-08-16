@@ -1,0 +1,51 @@
+﻿@model LoanManagementSystemAssignment.Models.LoanApplication
+
+@{
+    ViewData["Title"] = "Loan Application Details";
+}
+
+<div class="container mt-4">
+    <div class="details-card">
+        <h2>@ViewData["Title"]</h2>
+
+        <dl class="row">
+            <dt class="col-sm-4">Customer Name</dt>
+            <dd class="col-sm-8">@Model.CustomerName</dd>
+
+            <dt class="col-sm-4">NIC/Passport</dt>
+            <dd class="col-sm-8">@Model.NicPassport</dd>
+
+            <dt class="col-sm-4">Loan Type</dt>
+            <dd class="col-sm-8">@Model.LoanType</dd>
+
+            <dt class="col-sm-4">Interest Rate (%)</dt>
+            <dd class="col-sm-8">@Model.InterestRate</dd>
+
+            <dt class="col-sm-4">Loan Amount</dt>
+            <dd class="col-sm-8">@String.Format("₨{0:N2}", Model.LoanAmount)</dd>
+
+            <dt class="col-sm-4">Duration (Months)</dt>
+            <dd class="col-sm-8">@Model.DurationMonths</dd>
+
+            <dt class="col-sm-4">Status</dt>
+            <dd class="col-sm-8">
+                @if (Model.Status.Equals("Approved"))
+                {
+                    <span class="badge badge-approved">Approved</span>
+                }
+                else if (Model.Status.Equals("Rejected"))
+                {
+                    <span class="badge badge-rejected">Rejected</span>
+                }
+                else
+                {
+                    <span class="badge badge-new">New</span>
+                }
+            </dd>
+        </dl>
+
+        <div class="mt-3">
+            <a asp-action="Index" class="btn btn-primary">Back to List</a>
+        </div>
+    </div>
+</div>

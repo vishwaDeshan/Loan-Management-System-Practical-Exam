@@ -46,5 +46,77 @@ namespace LoanManagementSystemAssignment.Repositories
 			}
 			return loans;
 		}
+
+		public async Task<LoanApplication> GetByIdAsync(int id)
+		{
+			LoanApplication? loan = null;
+			using (var conn = new SqlConnection(_connectionString))
+			{
+				await conn.OpenAsync();
+				using (var cmd = new SqlCommand("SELECT * FROM LoanApplications WHERE Id = @Id", conn))
+				{
+					cmd.Parameters.AddWithValue("@Id", id);
+					using (var reader = await cmd.ExecuteReaderAsync())
+					{
+						if (await reader.ReadAsync())
+						{
+							loan = new LoanApplication
+							{
+								Id = reader.GetInt32(0),
+								CustomerName = reader.GetString(1),
+								NicPassport = reader.GetString(2),
+								LoanType = Enum.Parse<LoanType>(reader.GetString(3)),
+								InterestRate = reader.GetDecimal(4),
+								LoanAmount = reader.GetDecimal(5),
+								DurationMonths = reader.GetInt32(6),
+								Status = Enum.Parse<LoanStatus>(reader.GetString(7))
+							};
+						}
+					}
+				}
+			}
+			return loan;
+		}
+
+		public async Task AddAsync(LoanApplication loan)
+		{
+			using (var conn = new SqlConnection(_connectionString))
+			{
+				await conn.OpenAsync();
+				using (var cmd = new SqlCommand(
+					@"INSERT INTO LoanApplications (CustomerName, NicPassport, LoanType, InterestRate, LoanAmount, DurationMonths, Status)
+                  VALUES (@CustomerName, @NicPassport, @LoanType, @InterestRate, @LoanAmount, @DurationMonths, @Status)", conn))
+				{
+					cmd.Parameters.AddWithValue("@CustomerName", loan.CustomerName);
+					cmd.Parameters.AddWithValue("@NicPassport", loan.NicPassport);
+					cmd.Parameters.AddWithValue("@LoanType", loan.LoanType.ToString());
+					cmd.Parameters.AddWithValue("@InterestRate", loan.InterestRate);
+					cmd.Parameters.AddWithValue("@LoanAmount", loan.LoanAmount);
+					cmd.Parameters.AddWithValue("@DurationMonths", loan.DurationMonths);
+					cmd.Parameters.AddWithValue("@Status", loan.Status.ToString());
+					await cmd.ExecuteNonQueryAsync();
+				}
+			}
+		}
+
+		public async Task UpdateStatusAsync(int id, string status)
+		{
+			if (!Enum.TryParse<LoanStatus>(status, out _))
+			{
+				throw new ArgumentException("Invalid status value");
+			}
+
+			using (var conn = new SqlConnection(_connectionString))
+			{
+				await conn.OpenAsync();
+				using (var cmd = new SqlCommand(
+					"UPDATE LoanApplications SET Status = @Status WHERE Id = @Id", conn))
+				{
+					cmd.Parameters.AddWithValue("@Status", status);
+					cmd.Parameters.AddWithValue("@Id", id);
+					await cmd.ExecuteNonQueryAsync();
+				}
+			}
+		}
 	}
 }
