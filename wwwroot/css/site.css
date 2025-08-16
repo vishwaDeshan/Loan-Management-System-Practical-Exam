@@ -149,3 +149,12 @@ p, th, td {
         margin-bottom: 10px;
         color: #1b263b;
 }
+
+#submitLoanButton:disabled {
+    background-color: #6c757d !important;
+    border: none;
+    color: #fff !important;
+    opacity: 1 !important;
+    cursor: not-allowed !important;
+    pointer-events: none !important;
+}

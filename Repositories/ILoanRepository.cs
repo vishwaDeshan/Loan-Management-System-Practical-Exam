@@ -11,5 +11,7 @@ namespace LoanManagementSystemAssignment.Repositories
 		Task AddAsync(LoanApplication loan);
 
 		Task UpdateStatusAsync(int id, string status);
+
+		Task UpdateAsync(LoanApplication loan);
 	}
 }

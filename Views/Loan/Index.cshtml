@@ -11,7 +11,7 @@
     <div class="row">
         <div class="col-md-12">
             <div class="text-end mb-3">
-                <a asp-action="Add" class="btn btn-primary">
+                <a asp-action="AddOrEdit" class="btn btn-primary">
                     <span style="font-size: 1.5rem; font-weight: bold;">+</span> Add New Loan Application
                 </a>
             </div>
@@ -54,7 +54,13 @@
                                     </form>
                                 </td>
                                 <td>
-                                    <a asp-action="Details" asp-route-id="@loan.Id" class="btn btn-info btn-sm">View</a>
+                                    <a asp-action="Details" asp-route-id="@loan.Id" class="btn btn-success btn-sm" title="View">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a asp-action="AddorEdit" asp-route-id="@loan.Id" class="btn btn-success btn-sm" title="Edit">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+
                                 </td>
 
                             </tr>
