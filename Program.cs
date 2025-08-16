@@ -1,10 +1,21 @@
 using LoanManagementSystemAssignment.Repositories;
 using LoanManagementSystemAssignment.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+	.AddCookie(o =>
+	{
+		o.LoginPath = "/Account/Login";
+		o.AccessDeniedPath = "/Account/Login";
+		o.SlidingExpiration = true;
+	});
+
+builder.Services.AddAuthorization();
 
 // register the repository and service
 builder.Services.AddScoped<ILoanRepository, LoanRepository>();
@@ -13,6 +24,10 @@ builder.Services.AddScoped<ILoanService, LoanService>();
 builder.Services.AddSession();
 
 var app = builder.Build();
+
+app.UseAuthentication();
+
+app.UseAuthorization();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -31,6 +46,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Loan}/{action=Index}/{id?}");
 
 app.Run();
