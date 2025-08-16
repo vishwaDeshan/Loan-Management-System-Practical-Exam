@@ -52,5 +52,34 @@ namespace LoanManagementSystemAssignment.Controllers
 			}
 			return View(model);
 		}
+
+		public async Task<IActionResult> Details(int id)
+		{
+			try
+			{
+				var loan = await _service.GetByIdAsync(id);
+				return View(loan);
+			}
+			catch (ArgumentException ex)
+			{
+				return NotFound(ex.Message);
+			}
+		}
+
+		[HttpPost]
+		public async Task<IActionResult> EditStatus(int id, string status)
+		{
+			try
+			{
+				await _service.UpdateStatusAsync(id, status);
+				return RedirectToAction("Index");
+			}
+			catch (ArgumentException ex)
+			{
+				ModelState.AddModelError("", ex.Message);
+				var loans = await _service.GetAllAsync();
+				return View("Index", loans);
+			}
+		}
 	}
 }

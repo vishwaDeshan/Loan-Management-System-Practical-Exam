@@ -1,4 +1,5 @@
-﻿@model IEnumerable<LoanManagementSystemAssignment.Models.LoanApplication>
+﻿@using LoanManagementSystemAssignment.Enums
+@model IEnumerable<LoanManagementSystemAssignment.Models.LoanApplication>
 
 @{
     ViewData["Title"] = "Loan Applications Dashboard";
@@ -9,9 +10,11 @@
 
     <div class="row">
         <div class="col-md-12">
-            <p>
-                <a asp-action="Add" class="btn btn-primary">Add New Loan Application</a>
-            </p>
+            <div class="text-end mb-3">
+                <a asp-action="Add" class="btn btn-primary">
+                    <span style="font-size: 1.5rem; font-weight: bold;">+</span> Add New Loan Application
+                </a>
+            </div>
             @if (Model.Any())
             {
                 <table class="table table-bordered table-striped">
@@ -38,19 +41,21 @@
                                 <td>@String.Format("Rs. {0:N2}", loan.LoanAmount)</td>
                                 <td>@loan.DurationMonths</td>
                                 <td>
-                                    @if (loan.Status.Equals("Approved"))
-                                    {
-                                        <span class="badge badge-approved">Approved</span>
-                                    }
-                                    else if (loan.Status.Equals("Rejected"))
-                                    {
-                                        <span class="badge badge-rejected">Rejected</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge badge-new">New</span>
-                                    }
+                                    <form asp-action="EditStatus" method="post" class="d-inline ms-2">
+                                        <input type="hidden" name="id" value="@loan.Id" />
+                                        <select name="status" onchange="this.form.submit()"
+                                                class="form-select form-select-sm d-inline-block w-auto">
+                                            @foreach (var status in Enum.GetValues(typeof(LoanStatus)))
+                                            {
+                                                <option value="@status" selected="@(loan.Status == (LoanStatus)status)">@status</option>
+                                            }
+                                        </select>
+                                    </form>
                                 </td>
+                                <td>
+                                    <a asp-action="Details" asp-route-id="@loan.Id" class="btn btn-info btn-sm">View</a>
+                                </td>
+
                             </tr>
                         }
                     </tbody>
