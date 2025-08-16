@@ -1,5 +1,6 @@
 ﻿using LoanManagementSystemAssignment.Models;
 using LoanManagementSystemAssignment.Repositories;
+using LoanManagementSystemAssignment.ViewModels;
 
 namespace LoanManagementSystemAssignment.Services
 {
@@ -14,17 +15,20 @@ namespace LoanManagementSystemAssignment.Services
 			_logger = logger;
 		}
 
-		Task<List<LoanApplication>> ILoanService.GetAllAsync()
+		public async Task<List<LoanApplication>> GetAllAsync()
 		{
-			try
-			{
-				var loans = _repository.GetAllAsync();
-				return loans;
-			}catch(Exception ex)
-			{
-				_logger.LogError(ex, "An error occurred while retrieving loan applications.");
-				throw;
-			}
+			return await _repository.GetAllAsync();
 		}
+
+		public async Task<LoanApplication> GetByIdAsync(int id)
+		{
+			var loan = await _repository.GetByIdAsync(id);
+			if (loan == null)
+			{
+				throw new ArgumentException($"Loan application with ID {id} not found.");
+			}
+			return loan;
+		}
+
 	}
 }

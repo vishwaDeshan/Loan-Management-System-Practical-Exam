@@ -46,5 +46,36 @@ namespace LoanManagementSystemAssignment.Repositories
 			}
 			return loans;
 		}
+
+		public async Task<LoanApplication> GetByIdAsync(int id)
+		{
+			LoanApplication? loan = null;
+			using (var conn = new SqlConnection(_connectionString))
+			{
+				await conn.OpenAsync();
+				using (var cmd = new SqlCommand("SELECT * FROM LoanApplications WHERE Id = @Id", conn))
+				{
+					cmd.Parameters.AddWithValue("@Id", id);
+					using (var reader = await cmd.ExecuteReaderAsync())
+					{
+						if (await reader.ReadAsync())
+						{
+							loan = new LoanApplication
+							{
+								Id = reader.GetInt32(0),
+								CustomerName = reader.GetString(1),
+								NicPassport = reader.GetString(2),
+								LoanType = Enum.Parse<LoanType>(reader.GetString(3)),
+								InterestRate = reader.GetDecimal(4),
+								LoanAmount = reader.GetDecimal(5),
+								DurationMonths = reader.GetInt32(6),
+								Status = Enum.Parse<LoanStatus>(reader.GetString(7))
+							};
+						}
+					}
+				}
+			}
+			return loan;
+		}
 	}
 }
