@@ -65,10 +65,19 @@ h2 {
         border-color: #415a77;
     }
 
-.table {
-    overflow: hidden;
-    box-shadow: 0 0 15px rgba(0,0,0,0.4);
+.btn-warning {
+    padding: 4px 16px;
+    background-color: #FFFDD0;
 }
+
+    .btn-warning: hover{
+        background-color: transparent;
+    }
+
+    .table {
+        overflow: hidden;
+        box-shadow: 0 0 15px rgba(0,0,0,0.4);
+    }
 
     .table thead {
         background-color: #415a77;
