@@ -7,54 +7,64 @@
     ViewData["Title"] = "Add Loan Application";
 }
 
-<h2>Add Loan Application</h2>
+<div class="container mt-4 pb-2">
+    <div class="card shadow-lg rounded-lg p-4 form-card">
+        <h2 class="mb-4 text-center">@ViewData["Title"]</h2>
 
-<div class="row">
-    <div class="col-md-6">
         <form asp-action="Add" method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="CustomerName" class="control-label">Customer Name</label>
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <div class="form-group mb-3">
+                <label asp-for="CustomerName" class="form-label">Customer Name</label>
                 <input asp-for="CustomerName" class="form-control" />
                 <span asp-validation-for="CustomerName" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="NicPassport" class="control-label">Nic/Passport</label>
+
+            <div class="form-group mb-3">
+                <label asp-for="NicPassport" class="form-label">NIC/Passport</label>
                 <input asp-for="NicPassport" class="form-control" />
                 <span asp-validation-for="NicPassport" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="LoanType" class="control-label">Loan Type</label>
-                <select asp-for="LoanType" class="form-control" id="LoanType" asp-items="@(new SelectList(Enum.GetNames(typeof(LoanType))))">
+
+            <div class="form-group mb-3">
+                <label asp-for="LoanType" class="form-label">Loan Type</label>
+                <select asp-for="LoanType" class="form-control" id="LoanType"
+                        asp-items="@(new SelectList(Enum.GetNames(typeof(LoanType))))">
                     <option value="">Select Loan Type</option>
                 </select>
                 <span asp-validation-for="LoanType" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="InterestRate" class="control-label">Interest Rate (%)</label>
+
+            <div class="form-group mb-3">
+                <label asp-for="InterestRate" class="form-label">Interest Rate (%)</label>
                 <input asp-for="InterestRate" class="form-control" id="InterestRate" readonly />
                 <span asp-validation-for="InterestRate" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="LoanAmount" class="control-label">Loan Amount (LKR)</label>
+
+            <div class="form-group mb-3">
+                <label asp-for="LoanAmount" class="form-label">Loan Amount (LKR)</label>
                 <input asp-for="LoanAmount" class="form-control" />
                 <span asp-validation-for="LoanAmount" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="DurationMonths" class="control-label">Duration (Months)</label>
+
+            <div class="form-group mb-3">
+                <label asp-for="DurationMonths" class="form-label">Duration (Months)</label>
                 <input asp-for="DurationMonths" class="form-control" />
                 <span asp-validation-for="DurationMonths" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Status" class="control-label">Status</label>
-                <select asp-for="Status" class="form-control" asp-items="@(new SelectList(Enum.GetNames(typeof(LoanStatus))))">
+
+            <div class="form-group mb-3">
+                <label asp-for="Status" class="form-label">Status</label>
+                <select asp-for="Status" class="form-control"
+                        asp-items="@(new SelectList(Enum.GetNames(typeof(LoanStatus))))">
                     <option value="">Select Status Type</option>
                 </select>
                 <span asp-validation-for="Status" class="text-danger"></span>
             </div>
-            <div class="form-group mt-3">
-                <button type="submit" class="btn btn-primary">Submit</button>
-                <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+
+            <div class="form-group mt-4 text-center">
+                <button type="submit" class="btn btn-primary px-4">Submit</button>
+                <a asp-action="Index" class="btn btn-danger px-4 ms-2">Cancel</a>
             </div>
         </form>
     </div>
