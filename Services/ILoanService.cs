@@ -11,5 +11,9 @@ namespace LoanManagementSystemAssignment.Services
 
 		Task AddAsync(LoanApplicationViewModel viewModel);
 
+		Task UpdateStatusAsync(int id, string status);
+
+		decimal GetInterestRate(string loanType);
+
 	}
 }

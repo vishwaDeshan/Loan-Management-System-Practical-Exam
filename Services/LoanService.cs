@@ -72,6 +72,17 @@ namespace LoanManagementSystemAssignment.Services
 			await _repository.AddAsync(loan);
 		}
 
+		public async Task UpdateStatusAsync(int id, string status)
+		{
+			if (!Enum.TryParse<LoanStatus>(status, out _))
+			{
+				throw new ArgumentException("Invalid status value.");
+			}
+
+			var loan = await GetByIdAsync(id);
+			await _repository.UpdateStatusAsync(id, status);
+		}
+
 		public decimal GetInterestRate(string loanType)
 		{
 			return loanType switch

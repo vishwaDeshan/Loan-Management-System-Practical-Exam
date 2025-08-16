@@ -98,5 +98,25 @@ namespace LoanManagementSystemAssignment.Repositories
 				}
 			}
 		}
+
+		public async Task UpdateStatusAsync(int id, string status)
+		{
+			if (!Enum.TryParse<LoanStatus>(status, out _))
+			{
+				throw new ArgumentException("Invalid status value");
+			}
+
+			using (var conn = new SqlConnection(_connectionString))
+			{
+				await conn.OpenAsync();
+				using (var cmd = new SqlCommand(
+					"UPDATE LoanApplications SET Status = @Status WHERE Id = @Id", conn))
+				{
+					cmd.Parameters.AddWithValue("@Status", status);
+					cmd.Parameters.AddWithValue("@Id", id);
+					await cmd.ExecuteNonQueryAsync();
+				}
+			}
+		}
 	}
 }
