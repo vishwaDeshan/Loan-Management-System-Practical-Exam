@@ -33,7 +33,7 @@
                             <td>@loan.NicPassport</td>
                             <td>@loan.LoanType</td>
                             <td>@loan.InterestRate</td>
-                            <td>@loan.LoanAmount.ToString("C")</td>
+                            <td>@String.Format("Rs. {0:N2}", loan.LoanAmount)</td>
                             <td>@loan.DurationMonths</td>
                             <td>@loan.Status</td>
                         </tr>

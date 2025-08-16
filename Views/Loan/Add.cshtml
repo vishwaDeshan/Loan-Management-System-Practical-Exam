@@ -1,0 +1,77 @@
+﻿@model LoanManagementSystemAssignment.ViewModels.LoanApplicationViewModel
+@using LoanManagementSystemAssignment.Enums
+@using LoanManagementSystemAssignment.Models
+@using Microsoft.AspNetCore.Mvc.Rendering
+
+@{
+    ViewData["Title"] = "Add Loan Application";
+}
+
+<h2>Add Loan Application</h2>
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Add" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="CustomerName" class="control-label">Customer Name</label>
+                <input asp-for="CustomerName" class="form-control" />
+                <span asp-validation-for="CustomerName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NicPassport" class="control-label">Nic/Passport</label>
+                <input asp-for="NicPassport" class="form-control" />
+                <span asp-validation-for="NicPassport" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LoanType" class="control-label">Loan Type</label>
+                <select asp-for="LoanType" class="form-control" id="LoanType" asp-items="@(new SelectList(Enum.GetNames(typeof(LoanType))))">
+                    <option value="">Select Loan Type</option>
+                </select>
+                <span asp-validation-for="LoanType" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="InterestRate" class="control-label">Interest Rate (%)</label>
+                <input asp-for="InterestRate" class="form-control" id="InterestRate" readonly />
+                <span asp-validation-for="InterestRate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LoanAmount" class="control-label">Loan Amount (LKR)</label>
+                <input asp-for="LoanAmount" class="form-control" />
+                <span asp-validation-for="LoanAmount" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DurationMonths" class="control-label">Duration (Months)</label>
+                <input asp-for="DurationMonths" class="form-control" />
+                <span asp-validation-for="DurationMonths" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Status" class="control-label">Status</label>
+                <select asp-for="Status" class="form-control" asp-items="@(new SelectList(Enum.GetNames(typeof(LoanStatus))))">
+                    <option value="">Select Status Type</option>
+                </select>
+                <span asp-validation-for="Status" class="text-danger"></span>
+            </div>
+            <div class="form-group mt-3">
+                <button type="submit" class="btn btn-primary">Submit</button>
+                <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.getElementById('LoanType').addEventListener('change', function () {
+            let rate = 0;
+            switch (this.value) {
+                case 'Personal': rate = 5.0; break;
+                case 'Housing': rate = 3.0; break;
+                case 'Vehicle': rate = 7.0; break;
+                default: rate = 0; break;
+            }
+            document.getElementById('InterestRate').value = rate;
+        });
+    </script>
+}
