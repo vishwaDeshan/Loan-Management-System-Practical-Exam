@@ -77,5 +77,26 @@ namespace LoanManagementSystemAssignment.Repositories
 			}
 			return loan;
 		}
+
+		public async Task AddAsync(LoanApplication loan)
+		{
+			using (var conn = new SqlConnection(_connectionString))
+			{
+				await conn.OpenAsync();
+				using (var cmd = new SqlCommand(
+					@"INSERT INTO LoanApplications (CustomerName, NicPassport, LoanType, InterestRate, LoanAmount, DurationMonths, Status)
+                  VALUES (@CustomerName, @NicPassport, @LoanType, @InterestRate, @LoanAmount, @DurationMonths, @Status)", conn))
+				{
+					cmd.Parameters.AddWithValue("@CustomerName", loan.CustomerName);
+					cmd.Parameters.AddWithValue("@NicPassport", loan.NicPassport);
+					cmd.Parameters.AddWithValue("@LoanType", loan.LoanType.ToString());
+					cmd.Parameters.AddWithValue("@InterestRate", loan.InterestRate);
+					cmd.Parameters.AddWithValue("@LoanAmount", loan.LoanAmount);
+					cmd.Parameters.AddWithValue("@DurationMonths", loan.DurationMonths);
+					cmd.Parameters.AddWithValue("@Status", loan.Status.ToString());
+					await cmd.ExecuteNonQueryAsync();
+				}
+			}
+		}
 	}
 }

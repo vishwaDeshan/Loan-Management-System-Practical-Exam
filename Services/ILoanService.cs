@@ -8,5 +8,8 @@ namespace LoanManagementSystemAssignment.Services
 		Task<List<LoanApplication>> GetAllAsync();
 
 		Task<LoanApplication> GetByIdAsync(int id);
+
+		Task AddAsync(LoanApplicationViewModel viewModel);
+
 	}
 }
