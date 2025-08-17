@@ -1,7 +1,6 @@
 ﻿using LoanManagementSystemAssignment.Enums;
 using LoanManagementSystemAssignment.Models;
 using LoanManagementSystemAssignment.Repositories;
-using LoanManagementSystemAssignment.Validators;
 using LoanManagementSystemAssignment.ViewModels;
 
 namespace LoanManagementSystemAssignment.Services
@@ -26,14 +25,38 @@ namespace LoanManagementSystemAssignment.Services
 		{
 			var loan = await _repository.GetByIdAsync(id);
 			if (loan == null)
+			{
 				throw new ArgumentException($"Loan application with ID {id} not found.");
-
+			}
 			return loan;
 		}
 
 		public async Task AddAsync(LoanApplicationViewModel viewModel)
 		{
-			LoanValidator.Validate(viewModel);
+			if (string.IsNullOrWhiteSpace(viewModel.CustomerName))
+			{
+				throw new ArgumentException("Customer Name cannot be empty.");
+			}
+			if (string.IsNullOrWhiteSpace(viewModel.NicPassport))
+			{
+				throw new ArgumentException("NIC/Passport cannot be empty.");
+			}
+			if (!Enum.IsDefined(typeof(LoanType), viewModel.LoanType))
+			{
+				throw new ArgumentException("Invalid Loan Type.");
+			}
+			if (viewModel.LoanAmount <= 0)
+			{
+				throw new ArgumentException("Loan Amount must be positive.");
+			}
+			if (viewModel.DurationMonths <= 0 || viewModel.DurationMonths > 360)
+			{
+				throw new ArgumentException("Duration must be between 1 and 360 months.");
+			}
+			if (!Enum.IsDefined(typeof(LoanStatus), viewModel.Status))
+			{
+				throw new ArgumentException("Invalid Status.");
+			}
 
 			var loan = new LoanApplication
 			{
@@ -49,9 +72,42 @@ namespace LoanManagementSystemAssignment.Services
 			await _repository.AddAsync(loan);
 		}
 
+		public async Task UpdateStatusAsync(int id, string status)
+		{
+			if (!Enum.TryParse<LoanStatus>(status, out _))
+			{
+				throw new ArgumentException("Invalid status value.");
+			}
+
+			var loan = await GetByIdAsync(id);
+			await _repository.UpdateStatusAsync(id, status);
+		}
+
 		public async Task UpdateAsync(LoanApplicationViewModel viewModel)
 		{
-			LoanValidator.Validate(viewModel);
+			if (viewModel == null)
+				throw new ArgumentNullException(nameof(viewModel));
+
+			if (string.IsNullOrWhiteSpace(viewModel.CustomerName))
+				throw new ArgumentException("Customer Name cannot be empty.");
+
+			if (string.IsNullOrWhiteSpace(viewModel.NicPassport))
+				throw new ArgumentException("NIC/Passport cannot be empty.");
+
+			if (!Enum.IsDefined(typeof(LoanType), viewModel.LoanType))
+				throw new ArgumentException("Invalid Loan Type.");
+
+			if (viewModel.LoanAmount <= 0)
+				throw new ArgumentException("Loan Amount must be positive.");
+
+			if (viewModel.DurationMonths <= 0 || viewModel.DurationMonths > 360)
+				throw new ArgumentException("Duration must be between 1 and 360 months.");
+
+			if (viewModel.CustomerName.Any(char.IsDigit))
+				throw new ArgumentException("Customer Name cannot contain numbers.");
+
+			if (!Enum.IsDefined(typeof(LoanStatus), viewModel.Status))
+				throw new ArgumentException("Invalid Status.");
 
 			var loan = new LoanApplication
 			{
@@ -68,15 +124,6 @@ namespace LoanManagementSystemAssignment.Services
 			await _repository.UpdateAsync(loan);
 		}
 
-		public async Task UpdateStatusAsync(int id, string status)
-		{
-			if (!Enum.TryParse<LoanStatus>(status, out _))
-				throw new ArgumentException("Invalid status value.");
-
-			var loan = await GetByIdAsync(id);
-			await _repository.UpdateStatusAsync(id, status);
-		}
-
 		public decimal GetInterestRate(string loanType)
 		{
 			return loanType switch
@@ -87,5 +134,6 @@ namespace LoanManagementSystemAssignment.Services
 				_ => throw new ArgumentException("Invalid Loan Type.")
 			};
 		}
+
 	}
 }

@@ -11,7 +11,7 @@
     <div class="card shadow-lg rounded-lg p-4 form-card">
         <h2 class="mb-4 text-center">@ViewData["Title"]</h2>
 
-        <form asp-action="AddOrEdit" method="post" id="loanForm">
+        <form asp-action="AddOrEdit" method="post" id="loanForm" novalidate>
             <input type="hidden" asp-for="Id" />
 
             <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
@@ -85,76 +85,99 @@
     <partial name="_ValidationScriptsPartial" />
 
     <script>
-        const form = document.getElementById('loanForm');
-        const submitButton = document.getElementById('submitLoanButton');
-        const initialValues = {};
-        const isEdit = @Json.Serialize(Model.Id > 0);
+        $(document).ready(function () {
+            const form = $("#loanForm");
+            const submitButton = $("#submitLoanButton");
+            const initialValues = {};
 
-        function storeInitialValues() {
-            Array.from(form.elements).forEach(el => {
-                if (el.name) initialValues[el.name] = el.value;
+            // Store initial values
+            form.find("input, select").each(function () {
+                initialValues[this.name] = $(this).val();
             });
-        }
 
-        function isFormDirty() {
-            return Array.from(form.elements).some(el => el.name && el.value !== initialValues[el.name]);
-        }
-
-        function setInterestRate(type) {
-            let rate = 0;
-            switch (type) {
-                case 'Personal': rate = 5.0; break;
-                case 'Housing': rate = 3.0; break;
-                case 'Vehicle': rate = 7.0; break;
+            function isFormDirty() {
+                let dirty = false;
+                form.find("input, select").each(function () {
+                    if ($(this).val() != initialValues[this.name]) {
+                        dirty = true;
+                        return false;
+                    }
+                });
+                return dirty;
             }
-            document.getElementById('InterestRate').value = rate;
-        }
 
-        window.addEventListener('load', () => {
-            storeInitialValues();
-            const loanType = document.getElementById('LoanType').value;
-            if (loanType) setInterestRate(loanType);
-            submitButton.disabled = !isFormDirty();
-        });
+            function setInterestRate(type) {
+                let rate = 0;
+                switch (type) {
+                    case 'Personal': rate = 5.0; break;
+                    case 'Housing': rate = 3.0; break;
+                    case 'Vehicle': rate = 7.0; break;
+                }
+                $("#InterestRate").val(rate);
+            }
 
-        document.getElementById('LoanType').addEventListener('change', function () {
-            setInterestRate(this.value);
-            submitButton.disabled = !isFormDirty();
-        });
+            const loanTypeVal = $("#LoanType").val();
+            if (loanTypeVal) setInterestRate(loanTypeVal);
 
-        form.querySelectorAll('input, select').forEach(el => {
-            el.addEventListener('input', () => {
-                submitButton.disabled = !isFormDirty();
+            function toggleSubmit() {
+                submitButton.prop("disabled", !isFormDirty());
+            }
+
+            form.find("input, select").on("blur input change", function () {
+                $(this).valid();
+                toggleSubmit();
             });
-        });
 
-        document.getElementById('cancelButton').addEventListener('click', function (event) {
-            event.preventDefault();
-            if (isFormDirty()) {
-                document.querySelector('#confirmationModal .modal-body').textContent =
-                    'You have unsaved changes. Are you sure you want to cancel?';
-                window.pendingAction = () => window.location.href = '@Url.Action("Index")';
-                new bootstrap.Modal(document.getElementById('confirmationModal')).show();
-            } else {
-                window.location.href = '@Url.Action("Index")';
+            $("#CustomerName").on("input", function () {
+                this.value = this.value.replace(/[^a-zA-Z\s]/g, '');
+            });
+
+            $("#NicPassport").on("input blur", function () {
+                const val = $(this).val().toUpperCase().trim();
+                let error = "";
+
+                const oldNicPattern = /^[0-9]{9}[VX]$/;
+                const newNicPattern = /^[0-9]{12}$/;
+                const passportPattern = /^[A-Z0-9]{6,9}$/;
+
+                if (!oldNicPattern.test(val) && !newNicPattern.test(val) && !passportPattern.test(val)) {
+                    error = "Invalid NIC or Passport format";
             }
-        });
 
-        form.addEventListener('submit', function (event) {
-            event.preventDefault();
-            if ($(this).valid()) {
-                const customerName = document.getElementById('CustomerName').value;
-                document.querySelector('#confirmationModal .modal-body').textContent =
-                    `Are you sure you want to ${isEdit ? "update" : "submit"} the loan application for ${customerName}?`;
+            $(this).next(".text-danger").text(error);
+            });
+
+            $("#LoanType").on("change", function () {
+                setInterestRate(this.value);
+            });
+
+            $("#cancelButton").on("click", function (e) {
+                e.preventDefault();
+                if (isFormDirty()) {
+                    $("#confirmationModal .modal-body").text("You have unsaved changes. Are you sure you want to cancel?");
+                    window.pendingAction = () => window.location.href = '@Url.Action("Index")';
+                    new bootstrap.Modal(document.getElementById('confirmationModal')).show();
+                } else {
+                    window.location.href = '@Url.Action("Index")';
+                }
+            });
+
+            form.on("submit", function (e) {
+                e.preventDefault();
+                if (!form.valid()) return; // Only proceed if valid
+                const customerName = $("#CustomerName").val();
+                $("#confirmationModal .modal-body").text(
+                    `Are you sure you want to ${@Json.Serialize(isEdit ? "update" : "submit")} the loan application for ${customerName}?`
+                );
                 window.pendingForm = this;
                 new bootstrap.Modal(document.getElementById('confirmationModal')).show();
-            }
-        });
+            });
 
-        document.getElementById('confirmButton').addEventListener('click', function () {
-            if (window.pendingForm) window.pendingForm.submit();
-            else if (window.pendingAction) window.pendingAction();
-            bootstrap.Modal.getInstance(document.getElementById('confirmationModal')).hide();
+            $("#confirmButton").on("click", function () {
+                if (window.pendingForm) window.pendingForm.submit();
+                else if (window.pendingAction) window.pendingAction();
+                bootstrap.Modal.getInstance(document.getElementById('confirmationModal')).hide();
+            });
         });
     </script>
 }
