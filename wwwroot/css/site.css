@@ -124,8 +124,9 @@ p, th, td {
 }
 
 .input-validation-error {
-    border: 1px solid #b33939 !important; 
+    border: 1px solid #b33939 !important;
     color: #fff;
+    box-shadow: 0 0 5px 1px rgba(179, 57, 57, 0.7);
 }
 
 .text-danger {

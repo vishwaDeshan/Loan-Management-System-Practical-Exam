@@ -138,7 +138,7 @@
 
                 const oldNicPattern = /^[0-9]{9}[VX]$/;
                 const newNicPattern = /^[0-9]{12}$/;
-                const passportPattern = /^[A-Z0-9]{6,9}$/;
+                const passportPattern = /^[A-Z0-9]{6,8}$/;
 
                 if (!oldNicPattern.test(val) && !newNicPattern.test(val) && !passportPattern.test(val)) {
                     error = "Invalid NIC or Passport format";
