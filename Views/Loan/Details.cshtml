@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Loan Application Details";
+    var interestAmount = (Model.LoanAmount * Model.InterestRate) / 100;
 }
 
 <div class="container mt-4">
@@ -22,7 +23,10 @@
             <dd class="col-sm-8">@Model.InterestRate %</dd>
 
             <dt class="col-sm-4">Loan Amount</dt>
-            <dd class="col-sm-8">@String.Format("Rs.{0:N2} ", Model.LoanAmount)</dd>
+            <dd class="col-sm-8">@String.Format("Rs.{0:N2}", Model.LoanAmount)</dd>
+
+            <dt class="col-sm-4">Interest Amount</dt>
+            <dd class="col-sm-8">@String.Format("Rs.{0:N2}", interestAmount)</dd> <!-- New Field -->
 
             <dt class="col-sm-4">Duration (Months)</dt>
             <dd class="col-sm-8">@Model.DurationMonths</dd>

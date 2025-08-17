@@ -11,6 +11,7 @@ CREATE TABLE LoanApplications (
     Status NVARCHAR(50) NOT NULL DEFAULT 'New'
 );
 
+-- add sample initial data
 INSERT INTO LoanApplications(CustomerName, NicPassport, LoanType, InterestRate, LoanAmount, DurationMonths,Status)
 VALUES ('Vishwa', '982803217V', 'Personal', 5.00, 500000.00, 12, 'New'),
 ('Kalyani', '892736149V', 'Housing', 3.00, 100000.00, 36, 'New'),
