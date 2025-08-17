@@ -25,6 +25,7 @@
                             <th>Loan Type</th>
                             <th>Interest Rate (%)</th>
                             <th>Loan Amount</th>
+                            <th>Interest Amount</th> 
                             <th>Duration (Months)</th>
                             <th>Status</th>
                             <th>Actions</th>
@@ -33,12 +34,14 @@
                     <tbody>
                         @foreach (var loan in Model)
                         {
+                            var interestAmount = (loan.LoanAmount * loan.InterestRate) / 100;
                             <tr>
                                 <td>@loan.CustomerName</td>
                                 <td>@loan.NicPassport</td>
                                 <td>@loan.LoanType</td>
                                 <td>@loan.InterestRate</td>
                                 <td>@String.Format("Rs. {0:N2}", loan.LoanAmount)</td>
+                                <td>@String.Format("Rs. {0:N2}", interestAmount)</td>
                                 <td>@loan.DurationMonths</td>
                                 <td>
                                     <form asp-action="EditStatus" method="post" class="status-form d-inline ms-2" data-loan-id="@loan.Id">
@@ -60,9 +63,7 @@
                                     <a asp-action="AddorEdit" asp-route-id="@loan.Id" class="btn btn-success btn-sm" title="Edit">
                                         <i class="bi bi-pencil-square"></i>
                                     </a>
-
                                 </td>
-
                             </tr>
                         }
                     </tbody>
@@ -114,16 +115,14 @@
             modal.hide();
         });
 
-        // cancel buttin
+        // Cancel button
         document.getElementById('cancelButton').addEventListener('click', function () {
             if (window.pendingSelect) {
                 window.pendingSelect.value = window.pendingSelect.dataset.originalValue;
-
                 window.pendingSelect.dispatchEvent(new Event('input', { bubbles: true }));
             }
-
             const modal = bootstrap.Modal.getInstance(document.getElementById('confirmationModal'));
             modal.hide();
         });
-</script>
+    </script>
 }

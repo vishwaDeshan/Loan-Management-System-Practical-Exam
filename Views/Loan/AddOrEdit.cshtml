@@ -17,21 +17,21 @@
             <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
             <div class="form-group mb-3">
-                <label asp-for="CustomerName" class="form-label">Customer Name</label>
-                <input asp-for="CustomerName" class="form-control" />
+                <label asp-for="CustomerName" class="form-label">Customer Name <span class="text-danger"><b>*</b></span></label>
+                <input asp-for="CustomerName" class="form-control" placeholder="Enter customer name" />
                 <span asp-validation-for="CustomerName" class="text-danger"></span>
             </div>
 
             <div class="form-group mb-3">
-                <label asp-for="NicPassport" class="form-label">NIC/Passport</label>
-                <input asp-for="NicPassport" class="form-control" />
+                <label asp-for="NicPassport" class="form-label">NIC/Passport <span class="text-danger"><b>*</b></span></label>
+                <input asp-for="NicPassport" class="form-control" placeholder="Enter NIC or Passport number" />
                 <span asp-validation-for="NicPassport" class="text-danger"></span>
             </div>
 
             <div class="form-group mb-3">
                 <div class="row">
                     <div class="col-md-6">
-                        <label asp-for="LoanType" class="form-label">Loan Type</label>
+                        <label asp-for="LoanType" class="form-label">Loan Type <span class="text-danger"><b>*</b></span></label>
                         <select asp-for="LoanType" class="form-control" id="LoanType"
                                 asp-items="@(new SelectList(Enum.GetNames(typeof(LoanType)), Model.LoanType.ToString()))">
                             <option value="">Select Loan Type</option>
@@ -47,19 +47,27 @@
             </div>
 
             <div class="form-group mb-3">
-                <label asp-for="LoanAmount" class="form-label">Loan Amount (LKR)</label>
-                <input asp-for="LoanAmount" class="form-control" />
-                <span asp-validation-for="LoanAmount" class="text-danger"></span>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label asp-for="LoanAmount" class="form-label">Loan Amount (LKR) <span class="text-danger"><b>*</b></span></label>
+                        <input asp-for="LoanAmount" class="form-control" id="LoanAmount" placeholder="Enter loan amount" />
+                        <span asp-validation-for="LoanAmount" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Interest Amount (LKR)</label>
+                        <input type="text" id="InterestAmount" class="form-control" readonly />
+                    </div>
+                </div>
             </div>
 
             <div class="form-group mb-3">
-                <label asp-for="DurationMonths" class="form-label">Duration (Months)</label>
+                <label asp-for="DurationMonths" class="form-label">Duration (Months) <span class="text-danger"><b>*</b></span></label>
                 <input asp-for="DurationMonths" class="form-control" />
                 <span asp-validation-for="DurationMonths" class="text-danger"></span>
             </div>
 
             <div class="form-group mb-3">
-                <label asp-for="Status" class="form-label">Status</label>
+                <label asp-for="Status" class="form-label">Status <span class="text-danger"><b>*</b></span></label>
                 <select asp-for="Status" class="form-control"
                         asp-items="@(new SelectList(Enum.GetNames(typeof(LoanStatus)), Model.Status.ToString()))">
                     <option value="">Select Status Type</option>
@@ -114,6 +122,14 @@
                     case 'Vehicle': rate = 7.0; break;
                 }
                 $("#InterestRate").val(rate);
+                updateInterestAmount();
+            }
+
+            function updateInterestAmount() {
+                const loanAmount = parseFloat($("#LoanAmount").val()) || 0;
+                const interestRate = parseFloat($("#InterestRate").val()) || 0;
+                const interestAmount = (loanAmount * interestRate) / 100;
+                $("#InterestAmount").val(interestAmount.toFixed(2));
             }
 
             const loanTypeVal = $("#LoanType").val();
@@ -126,6 +142,7 @@
             form.find("input, select").on("blur input change", function () {
                 $(this).valid();
                 toggleSubmit();
+                updateInterestAmount();
             });
 
             $("#CustomerName").on("input", function () {
@@ -142,9 +159,9 @@
 
                 if (!oldNicPattern.test(val) && !newNicPattern.test(val) && !passportPattern.test(val)) {
                     error = "Invalid NIC or Passport format";
-            }
+                }
 
-            $(this).next(".text-danger").text(error);
+                $(this).next(".text-danger").text(error);
             });
 
             $("#LoanType").on("change", function () {
