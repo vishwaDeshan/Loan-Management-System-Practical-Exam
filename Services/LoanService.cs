@@ -1,6 +1,7 @@
 ﻿using LoanManagementSystemAssignment.Enums;
 using LoanManagementSystemAssignment.Models;
 using LoanManagementSystemAssignment.Repositories;
+using LoanManagementSystemAssignment.Validations;
 using LoanManagementSystemAssignment.ViewModels;
 
 namespace LoanManagementSystemAssignment.Services
@@ -8,12 +9,10 @@ namespace LoanManagementSystemAssignment.Services
 	public class LoanService : ILoanService
 	{
 		private readonly ILoanRepository _repository;
-		private readonly ILogger<LoanService> _logger;
 
-		public LoanService(ILoanRepository repository, ILogger<LoanService> logger)
+		public LoanService(ILoanRepository repository)
 		{
 			_repository = repository;
-			_logger = logger;
 		}
 
 		public async Task<List<LoanApplication>> GetAllAsync()
@@ -33,30 +32,7 @@ namespace LoanManagementSystemAssignment.Services
 
 		public async Task AddAsync(LoanApplicationViewModel viewModel)
 		{
-			if (string.IsNullOrWhiteSpace(viewModel.CustomerName))
-			{
-				throw new ArgumentException("Customer Name cannot be empty.");
-			}
-			if (string.IsNullOrWhiteSpace(viewModel.NicPassport))
-			{
-				throw new ArgumentException("NIC/Passport cannot be empty.");
-			}
-			if (!Enum.IsDefined(typeof(LoanType), viewModel.LoanType))
-			{
-				throw new ArgumentException("Invalid Loan Type.");
-			}
-			if (viewModel.LoanAmount <= 0)
-			{
-				throw new ArgumentException("Loan Amount must be positive.");
-			}
-			if (viewModel.DurationMonths <= 0 || viewModel.DurationMonths > 360)
-			{
-				throw new ArgumentException("Duration must be between 1 and 360 months.");
-			}
-			if (!Enum.IsDefined(typeof(LoanStatus), viewModel.Status))
-			{
-				throw new ArgumentException("Invalid Status.");
-			}
+			LoanValidator.Validate(viewModel);
 
 			var loan = new LoanApplication
 			{
@@ -85,26 +61,7 @@ namespace LoanManagementSystemAssignment.Services
 
 		public async Task UpdateAsync(LoanApplicationViewModel viewModel)
 		{
-			if (viewModel == null)
-				throw new ArgumentNullException(nameof(viewModel));
-
-			if (string.IsNullOrWhiteSpace(viewModel.CustomerName))
-				throw new ArgumentException("Customer Name cannot be empty.");
-
-			if (string.IsNullOrWhiteSpace(viewModel.NicPassport))
-				throw new ArgumentException("NIC/Passport cannot be empty.");
-
-			if (!Enum.IsDefined(typeof(LoanType), viewModel.LoanType))
-				throw new ArgumentException("Invalid Loan Type.");
-
-			if (viewModel.LoanAmount <= 0)
-				throw new ArgumentException("Loan Amount must be positive.");
-
-			if (viewModel.DurationMonths <= 0 || viewModel.DurationMonths > 360)
-				throw new ArgumentException("Duration must be between 1 and 360 months.");
-
-			if (!Enum.IsDefined(typeof(LoanStatus), viewModel.Status))
-				throw new ArgumentException("Invalid Status.");
+			LoanValidator.Validate(viewModel);
 
 			var loan = new LoanApplication
 			{

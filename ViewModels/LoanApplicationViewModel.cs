@@ -1,4 +1,5 @@
 ﻿using LoanManagementSystemAssignment.Enums;
+using LoanManagementSystemAssignment.Validations;
 using System.ComponentModel.DataAnnotations;
 
 namespace LoanManagementSystemAssignment.ViewModels
@@ -9,10 +10,12 @@ namespace LoanManagementSystemAssignment.ViewModels
 
 		[Required(ErrorMessage = "Customer Name is required")]
 		[StringLength(100)]
+		[NoDigitsAllowed(ErrorMessage = "Customer Name cannot contain numbers")]
 		public required string CustomerName { get; set; }
 
 		[Required(ErrorMessage = "NIC/Passport is required")]
 		[StringLength(50)]
+		[NicPassportValidation(ErrorMessage = "Invalid NIC or Passport format")]
 		public required string NicPassport { get; set; }
 
 		[Required(ErrorMessage = "Loan Type is required")]
